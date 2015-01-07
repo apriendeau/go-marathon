@@ -1,9 +1,6 @@
 package marathon
 
-import (
-	"os"
-	"strings"
-)
+import "strings"
 
 // Constructor is a type that the minimum fields required to construct an app
 type Constructor struct {
@@ -73,22 +70,6 @@ func CreateDockerProperties(c Constructor) DockerProperties {
 		Image: image,
 	}
 	return dockerProps
-}
-
-// CreateArchiveURL creates the download link for stash repo
-func CreateArchiveURL(project, repo, at string) string {
-	s := os.Getenv("STASH_URL")
-	strArray := []string{
-		s,
-		"/plugins/servlet/archive/projects/",
-		project,
-		"/repos/",
-		repo,
-		"?format=tar.gz",
-	}
-	url := strings.Join(strArray, "")
-	url = strings.Join([]string{url, "&at=", at}, "")
-	return url
 }
 
 func createDevRegistryTag(dockerImage, tag string) string {

@@ -1,11 +1,8 @@
 package marathon
 
 import (
-	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
-	"net/http"
 	"strings"
 )
 
@@ -26,6 +23,22 @@ type App struct {
 	URIs            []string               `json:"uris" bson:"uris,omitempty"`
 	DockerImage     string                 `json:"dockerImage" bson:"dockerImage,omitempty"`
 	Tag             string                 `json:"tag" bson:"tag,omitempty"`
+	client          connInfo
+}
+
+// AppResponse is the response wrapper for getting information about an app
+type AppResponse struct {
+	App App `json:"app"`
+}
+
+// AppsResponse is the response wrapper for getting information about all apps
+type AppsResponse struct {
+	Apps []App `json:"apps"`
+}
+
+// VersionsResponse is the response wrapper for getting information about all apps
+type VersionsResponse struct {
+	Apps []App `json:"apps"`
 }
 
 // HealthCheck is structure for creating a health check
@@ -65,33 +78,58 @@ type UpgradeStrategy struct {
 	MinimumHealthCapacity float64 `json:"minimumHealthCapacity"`
 }
 
-// Deploy builds an app in marathon
-func (c Client) Deploy(body App, initialDeploy bool) []byte {
-	var req *http.Request
-	var url string
-	var b []byte
-	method := "POST"
-	b, _ = json.Marshal(body)
-	if initialDeploy {
-		url = c.createMarathonURL("/v2/apps")
-	} else {
-		s := strings.Join([]string{"/v2/apps", body.ID}, "/")
-		url = c.createMarathonURL(s)
-		method = "PUT"
-	}
+// Create builds an app in marathon
+func (a App) Create(body App) ([]byte, error) {
+	deploy, err := a.deploy(body, true)
+	return deploy, err
+}
 
-	req, _ = http.NewRequest(method, url, bytes.NewBuffer(b))
-	req.Header.Set("Content-Type", "application/json")
-	client := c.HTTP
+// Update builds an app in marathon
+func (a App) Update(body App) ([]byte, error) {
+	deploy, err := a.deploy(body, false)
+	return deploy, err
+}
 
-	res, err := client.Do(req)
+// All Returns information about all the apps
+func (a App) All() (AppsResponse, error) {
+	var apps AppsResponse
+	res, err := a.client.Request("GET", "/v2/apps", nil)
 	if err != nil {
-		log.Fatal(err)
+		return apps, err
 	}
 	defer res.Body.Close()
-	complete, _ := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		return apps, err
 	}
-	return complete
+	json.Unmarshal(body, &apps)
+	return apps, nil
+}
+
+// One returns information about a single app
+func (a App) One(id string) (AppResponse, error) {
+	var app AppResponse
+	url := strings.Join([]string{"/v2/apps", id}, "/")
+	res, err := a.client.Request("GET", url, nil)
+	if err != nil {
+		return app, err
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return app, err
+	}
+	json.Unmarshal(body, &app)
+	return app, nil
+}
+
+// Delete removes an Application from marathon
+func (a App) Delete(id string) error {
+	url := strings.Join([]string{"/v2/apps", id}, "/")
+	res, err := a.client.Request("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	return nil
 }
