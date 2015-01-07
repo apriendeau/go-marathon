@@ -2,13 +2,14 @@ package marathon
 
 import (
 	"net/http"
+	"net/http/cookiejar"
 	"strings"
 )
 
 // Client is the object for containing the client for
 type Client struct {
-	BaseURI string        `json:"uri"`
-	HTTP    *http.Request `json:"-"`
+	BaseURI string       `json:"uri"`
+	HTTP    *http.Client `json:"-"`
 }
 
 // BasicAuth sets the basic auth for the marathon requests if you need
@@ -19,19 +20,15 @@ type BasicAuth struct {
 
 // NewClient returns the Client object to interact with marathon
 func NewClient(uri string) Client {
-	req, _ := http.NewRequest("GET", uri, nil)
-	var client = Client{
-		BaseURI: cleanBase(uri),
-		HTTP:    req,
+	cookieJar, _ := cookiejar.New(nil)
+	c := &http.Client{
+		Jar: cookieJar,
 	}
-	return client
-}
 
-// NewClientWithBasicAuth returns the Client object to interact with marathon
-// but also sets basic Auth
-func NewClientWithBasicAuth(uri string, auth BasicAuth) Client {
-	client := NewClient(uri)
-	client.HTTP.SetBasicAuth(auth.User, auth.Password)
+	client := Client{
+		BaseURI: cleanBase(uri),
+		HTTP:    c,
+	}
 	return client
 }
 
