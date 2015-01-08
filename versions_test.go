@@ -28,8 +28,10 @@ func TestVersion(t *testing.T) {
 		httpmock.NewStringResponder(200, `{"id":"/utopia","cmd":null,"args":["production"],"user":null,"env":{"TEST":"AWESOME"},"instances":2,"cpus":2,"mem":1024,"disk":0,"executor":"","constraints":[],"uris":["/root/.dockercfg"],"storeUrls":[],"ports":[10003],"requirePorts":false,"backoffSeconds":1,"backoffFactor":1.15,"container":{"type":"DOCKER","volumes":[{"containerPath":"/var/run/docker.sock","hostPath":"/var/run/docker.sock","mode":"RW"}],"docker":{"image":"docker-prd.itriagehealth.com/utopia:0.1.6","network":null,"portMappings":null}},"healthChecks":[{"path":"/heartbeat","protocol":"HTTP","portIndex":0,"command":null,"gracePeriodSeconds":10,"intervalSeconds":10,"timeoutSeconds":10,"maxConsecutiveFailures":10}],"dependencies":[],"upgradeStrategy":{"minimumHealthCapacity":1},"version":"2015-01-07T18:59:38.310Z"}`))
 
 	c := NewClient("https://api.marathon.com")
-	v, err := c.App.GetVersion("utopia", "2015-01-07T18:59:38.310Z")
+	date := "2015-01-07T18:59:38.310Z"
+	v, err := c.App.GetVersion("utopia", date)
 
 	assert.Equal(t, err, nil, "err should be nil")
 	assert.Equal(t, v.ID, "/utopia", "id should be equal to /utopia")
+	assert.Equal(t, v.Version, date, "the versions should match")
 }

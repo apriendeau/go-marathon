@@ -49,8 +49,16 @@ type HealthCheck struct {
 
 // Container is the structure for creating a container object
 type Container struct {
-	Type   string           `json:"type"`
-	Docker DockerProperties `json:"docker"`
+	Type    string           `json:"type"`
+	Docker  DockerProperties `json:"docker"`
+	Volumes Volume           `json:"volumes"`
+}
+
+// Volume is the structure for appending volumnes
+type Volume struct {
+	ContainerPath string `json:"containerPath"`
+	HostPath      string `json:"hostPath"`
+	Mode          string `json:"mode"`
 }
 
 // DockerProperties is everything to you need to send a docker container
