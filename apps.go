@@ -33,6 +33,10 @@ type App struct {
 	URIs            []string               `json:"uris" bson:"uris,omitempty"`
 	DockerImage     string                 `json:"dockerImage" bson:"dockerImage,omitempty"`
 	Tag             string                 `json:"tag" bson:"tag,omitempty"`
+	TasksRunning    int                    `json:"tasksRunning,omitempty" bson:"tasksRunning,omitempty"`
+	TasksStaged     int                    `json:"tasksStaged,omitempty" bson:"tasksStaged,omitempty"`
+	Tasks           []Task                 `json:"tasks,omitempty" bson:"tasks,omitempty"`
+	User            string                 `json:"user,omitempty" bson:"user,omitempty"`
 	client          connInfo
 }
 

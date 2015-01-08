@@ -9,7 +9,8 @@ import (
 
 // Client is the object for containing the client for
 type Client struct {
-	App App `json:"app"`
+	App  App  `json:"app"`
+	Task Task `json:"task"`
 }
 
 type connInfo struct {
@@ -28,7 +29,8 @@ func NewClient(uri string) Client {
 		HTTP:    c,
 	}
 	client := Client{
-		App: App{client: conn},
+		App:  App{client: conn},
+		Task: Task{client: conn},
 	}
 	return client
 }

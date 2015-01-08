@@ -1,4 +1,4 @@
 test:
-	@go test --cover
+	@go test --cover -v
 
 .PHONY: test
