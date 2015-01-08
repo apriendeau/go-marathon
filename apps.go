@@ -6,6 +6,16 @@ import (
 	"strings"
 )
 
+// AppResponse is the response wrapper for getting information about an app
+type AppResponse struct {
+	App App `json:"app"`
+}
+
+// AppsResponse is the response wrapper for getting information about all apps
+type AppsResponse struct {
+	Apps []App `json:"apps"`
+}
+
 // App is sets the basic app structure
 type App struct {
 	ID              string                 `json:"id"`
@@ -24,21 +34,6 @@ type App struct {
 	DockerImage     string                 `json:"dockerImage" bson:"dockerImage,omitempty"`
 	Tag             string                 `json:"tag" bson:"tag,omitempty"`
 	client          connInfo
-}
-
-// AppResponse is the response wrapper for getting information about an app
-type AppResponse struct {
-	App App `json:"app"`
-}
-
-// AppsResponse is the response wrapper for getting information about all apps
-type AppsResponse struct {
-	Apps []App `json:"apps"`
-}
-
-// VersionsResponse is the response wrapper for getting information about all apps
-type VersionsResponse struct {
-	Apps []App `json:"apps"`
 }
 
 // HealthCheck is structure for creating a health check
@@ -76,18 +71,6 @@ type PortMapping struct {
 // UpgradeStrategy allsow your to set your deploy
 type UpgradeStrategy struct {
 	MinimumHealthCapacity float64 `json:"minimumHealthCapacity"`
-}
-
-// Create builds an app in marathon
-func (a App) Create(body App) ([]byte, error) {
-	deploy, err := a.deploy(body, true)
-	return deploy, err
-}
-
-// Update builds an app in marathon
-func (a App) Update(body App) ([]byte, error) {
-	deploy, err := a.deploy(body, false)
-	return deploy, err
 }
 
 // All Returns information about all the apps

@@ -6,8 +6,21 @@ import (
 	"strings"
 )
 
+// Create builds an app in marathon
+func (a App) Create(body App) (App, error) {
+	deploy, err := a.deploy(body, true)
+	return deploy, err
+}
+
+// Update builds an app in marathon
+func (a App) Update(body App) (App, error) {
+	deploy, err := a.deploy(body, false)
+	return deploy, err
+}
+
 // Deploy builds an app in marathon
-func (a App) deploy(body App, initialDeploy bool) ([]byte, error) {
+func (a App) deploy(body App, initialDeploy bool) (App, error) {
+	var app App
 	method := "POST"
 	b, _ := json.Marshal(body)
 	url := "/v2/apps"
@@ -17,14 +30,14 @@ func (a App) deploy(body App, initialDeploy bool) ([]byte, error) {
 	}
 	res, err := a.client.Request(method, url, b)
 	if err != nil {
-		return nil, err
+		return app, err
 	}
 
 	defer res.Body.Close()
-	complete, _ := ioutil.ReadAll(res.Body)
+	parsedBody, _ := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return app, err
 	}
-
-	return complete, nil
+	json.Unmarshal(parsedBody, &app)
+	return app, nil
 }

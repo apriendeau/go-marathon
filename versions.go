@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+// VersionsResponse is the response wrapper for getting information about all apps
+type VersionsResponse struct {
+	Versions []string `json:"versions"`
+}
+
 // GetVersions return all the versions of an app
 func (a App) GetVersions(name string) (VersionsResponse, error) {
 	var response VersionsResponse
