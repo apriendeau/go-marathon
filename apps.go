@@ -27,7 +27,7 @@ type App struct {
 	Container       Container              `json:"container,omitempty" bson:"container"`
 	Ports           []int                  `json:"ports,omitempty" bson:"ports,omitempty"`
 	Instances       int                    `json:"instances,omitempty" bson:"instances,omitempty"`
-	UpgradeStrategy UpgradeStrategy        `json:"upgradeStrategy, omitempty" bson:"upgradeStrategy,omitempty"`
+	UpgradeStrategy UpgradeStrategy        `json:"upgradeStrategy,omitempty" bson:"upgradeStrategy,omitempty"`
 	Version         string                 `json:"version,omitempty" bson:"version,omitempty"`
 	Env             map[string]interface{} `json:"env" bson:"env,omitempty"`
 	URIs            []string               `json:"uris" bson:"uris,omitempty"`
@@ -45,10 +45,10 @@ type HealthCheck struct {
 	Protocol               string `json:"protocol"`
 	Path                   string `json:"path"`
 	GracePeriodSeconds     int    `json:"gracePeriodSeconds,omitempty"`
-	IntervalSeconds        int    `json:"intervalSeconds, omitempty"`
-	PortIndex              int    `json:"portIndex, omitempty"`
-	TimeoutSeconds         int    `json:"timeoutSeconds, omitempty"`
-	MaxConsecutiveFailures int    `json:"maxConsecutiveFailures, omitempty"`
+	IntervalSeconds        int    `json:"intervalSeconds,omitempty"`
+	PortIndex              int    `json:"portIndex,omitempty"`
+	TimeoutSeconds         int    `json:"timeoutSeconds,omitempty"`
+	MaxConsecutiveFailures int    `json:"maxConsecutiveFailures,omitempty"`
 }
 
 // Container is the structure for creating a container object
